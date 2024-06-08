@@ -2,8 +2,10 @@ import customtkinter as ctk
 import subprocess
 import sys
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from tkinter import filedialog, messagebox, simpledialog
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from tkinter import filedialog, messagebox
 import tkinter as tk
 
 def install_dependencies():
@@ -45,40 +47,64 @@ def generate_pdf_report():
     filename = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
     if not filename:
         return
-    
-    c = canvas.Canvas(filename, pagesize=letter)
-    c.setTitle("Cyber Toolbox Report")
-    
+
+    # Create a PDF document
+    doc = SimpleDocTemplate(filename, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Add a title
+    title = Paragraph("Cyber Toolbox Report", styles['Title'])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # Files to read data from
     files = ["scannmap_results.txt", "bruteforcessh_results.txt", "check_password_results.txt"]
-    y_position = 750
-    c.setFont("Helvetica", 12)
+
     for file in files:
         try:
             with open(file, "r") as f:
-                c.drawString(72, y_position, f"Results from {file}:")
-                y_position -= 20
-                for line in f:
-                    c.drawString(72, y_position, line.strip())
-                    y_position -= 14
-                    if y_position < 72:
-                        c.showPage()
-                        y_position = 750
+                content = f.read()
+                # Add a header for each section
+                header = Paragraph(f"Results from {file}:", styles['Heading2'])
+                elements.append(header)
+                elements.append(Spacer(1, 12))
+
+                # Split the content into lines
+                lines = content.splitlines()
+
+                # Create a table with the results
+                table_data = [[line] for line in lines]
+                table = Table(table_data)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ]))
+                elements.append(table)
+                elements.append(Spacer(1, 24))
         except FileNotFoundError:
-            c.drawString(72, y_position, f"File {file} not found, skipping...")
-            y_position -= 20
-    c.save()
+            error_message = Paragraph(f"File {file} not found, skipping...", styles['Normal'])
+            elements.append(error_message)
+            elements.append(Spacer(1, 12))
+
+    doc.build(elements)
     messagebox.showinfo("PDF Generated", "PDF report has been generated.")
 
 frame = ctk.CTkFrame(master=app)
 frame.pack(pady=20, padx=20, fill="both", expand=True)
 
-button_scan = ctk.CTkButton(master=frame, text="Run Network Scan", command=run_network_scan)
+button_scan = ctk.CTkButton(master=frame, text="Run Network Scan", command=lambda: launch_script("scannmap.py"))
 button_scan.pack(pady=10)
 
-button_bruteforce = ctk.CTkButton(master=frame, text="Start Brute Force", command=start_brute_force)
+button_bruteforce = ctk.CTkButton(master=frame, text="Start Brute Force", command=lambda: launch_script("bruteforcessh.py"))
 button_bruteforce.pack(pady=10)
 
-button_check_password = ctk.CTkButton(master=frame, text="Check Password Strength", command=check_password_strength)
+button_check_password = ctk.CTkButton(master=frame, text="Check Password Strength", command=lambda: launch_script("check_password.py"))
 button_check_password.pack(pady=10)
 
 button_pdf = ctk.CTkButton(master=frame, text="Generate PDF Report", command=generate_pdf_report)
