@@ -2,6 +2,7 @@ import tkinter as tk
 import customtkinter as ctk
 from paramiko import SSHClient, AutoAddPolicy
 from ftplib import FTP
+import sys
 import os
 import subprocess
 
