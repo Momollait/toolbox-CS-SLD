@@ -24,12 +24,7 @@ Toolbox-CS-SLD is a cybersecurity toolbox designed to assist security profession
    cd toolbox-CS-SLD
    ```
 
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the toolbox**:
+2. **Run the toolbox**:
    ```bash
    python main.py
    ```
@@ -40,15 +35,15 @@ Each script can be executed through the main interface provided by `main.py`.
 
 ### SSH Brute Force
 
-
+The SSH Brute Force tool attempts to connect to a machine via SSH using a list of usernames and passwords. It is useful for testing the strength of SSH passwords.
 
 ### Password Checker
 
-
+This tool checks the strength of a password by evaluating its length, complexity, and compliance with security policies.
 
 ### Network Scanner
 
-
+The Network Scanner uses Nmap to scan a network and identify connected devices, open ports, and running services.
 
 ## Contributing
 
@@ -56,11 +51,11 @@ We welcome contributions! Please fork the repository and submit pull requests fo
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the SupDeVinci License. Thanks to you
 
 ## Contact
 
-For any questions or feedback, please contact [your email/contact information].
+For any questions or feedback, please contact me on Discord : Momolle.
 
 ## Repository Structure
 
@@ -68,5 +63,6 @@ For any questions or feedback, please contact [your email/contact information].
 - `bruteforcessh.py`: Script for SSH brute force attacks.
 - `check_password.py`: Script for checking password strength.
 - `scannmap.py`: Script for network scanning.
+- `web_vuln_scanner.py` : Script for IP Address scanning. 
 - `README.md`: Project documentation.
 
